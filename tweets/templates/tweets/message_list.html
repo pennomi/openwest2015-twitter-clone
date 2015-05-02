@@ -1,0 +1,15 @@
+<html>
+  <head>
+    <title>Foo</title>
+  </head>
+  <body>
+    <h1> A Header. Woo.</h1>
+    {% for message in object_list %}
+    <h3>{{ message.user }}</h3>
+      <p>
+        {{ message.text }}
+      </p>
+      <hr>
+    {% endfor %}
+  </body>
+</html
