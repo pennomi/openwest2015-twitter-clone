@@ -15,10 +15,10 @@ class Message(models.Model):
     text = models.CharField(max_length=140)
     created_at = models.DateTimeField(auto_now_add=True)
     stars = models.ManyToManyField(
-        settings.AUTH_USER_MODEL, related_name="starred_messages")
+        settings.AUTH_USER_MODEL, related_name="starred_messages", blank=True)
     tagged_users = models.ManyToManyField(
-        settings.AUTH_USER_MODEL, related_name="messages_tagged_in")
-    hash_tags = models.ManyToManyField(HashTag)
+        settings.AUTH_USER_MODEL, related_name="messages_tagged_in", blank=True)
+    hash_tags = models.ManyToManyField(HashTag, blank=True)
 
     def __str__(self):
         return self.text
