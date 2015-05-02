@@ -2,7 +2,7 @@
 
 To get set up follow the steps:
 
-```
+```bash
 # Clone the repository
 git clone https://github.com/pennomi/openwest2015-twitter-clone.git
 cd openwest2015-twitter-clone
