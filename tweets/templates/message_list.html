@@ -3,13 +3,40 @@
     <title>Foo</title>
   </head>
   <body>
-    <h1> A Header. Woo.</h1>
-    {% for message in object_list %}
-    <h3>{{ message.user }}</h3>
-      <p>
-        {{ message.text }}
-      </p>
-      <hr>
-    {% endfor %}
+      <!-- Header -->
+      <div style="width: 100%;
+          position:absolute;
+          left: 0;
+          right:0;
+          top: 0;
+          z-index: 5000;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100px;
+          background:blue;
+          box-shadow: 0 5px; 10px rgba(0,0,0,.4);
+          text-align: center;
+          color: white;
+      ">
+          <h1> A Header. Woo.</h1>
+      </div>
+      <!-- END Header -->
+      <!-- Main Container -->
+      <div>
+        {% for message in object_list %}
+          <h3>{{ message.user }}</h3>
+          <p>
+            {{ message.text }}
+          </p>
+          <hr>
+        {% endfor %}
+      </div>
+      <!-- END Main Container -->
+      <!-- Footer -->
+      <div>
+          <!-- Footer Content -->
+      </div>
+      <!-- END Footer -->
   </body>
 </html
