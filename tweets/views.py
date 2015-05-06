@@ -2,7 +2,7 @@ from django.http import Http404
 from django.contrib.auth import get_user_model
 from django.shortcuts import render, get_object_or_404
 from django.utils.translation import ugettext as _
-from django.views.generic import ListView
+from django.views.generic import ListView, edit
 
 from .models import Message
 
@@ -29,4 +29,15 @@ class FilteredMessageList(MessageList):
         queryset = super().get_queryset()
         return queryset.filter(user=user)
 
-        return queryset
+
+class CreateMessage(edit.CreateView):
+    model = Message
+    fields = ['text']
+    template_name = "message_form.html"
+
+    def form_valid(self, form):
+        obj = form.save(commit=False)
+        obj.user = self.request.user
+        obj.save()
+
+        return super().form_valid(form)
