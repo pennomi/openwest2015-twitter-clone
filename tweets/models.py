@@ -1,6 +1,8 @@
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.core.urlresolvers import reverse
+from .tools import UsertagParser, HashtagParser
 
 
 class Hashtag(models.Model):
@@ -29,3 +31,23 @@ class Message(models.Model):
 
     def __str__(self):
         return self.text
+
+    def save(self):
+        # Must already exist in DB to be used in m2m relations below
+        super().save()
+
+        # Look up users and create FKs to them if they exist
+        User = get_user_model()
+        usertags = UsertagParser().get_matches(self.text)
+
+        # Update our tagged_users
+        self.tagged_users.clear()
+        tagged_users = User.objects.filter(username__in=usertags)
+        self.tagged_users.add(*list(tagged_users))
+
+        # Update our hashtags
+        self.hashtags.clear()
+        hashtags = HashtagParser().get_matches(self.text)
+        # get_or_create returns a 2-tuple with (object, was_created?)
+        hashtags = [Hashtag.objects.get_or_create(text=tag)[0] for tag in hashtags]
+        self.hashtags.add(*hashtags)
