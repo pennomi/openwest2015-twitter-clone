@@ -2,7 +2,7 @@ from django.conf import settings
 from django.db import models
 
 
-class HashTag(models.Model):
+class Hashtag(models.Model):
     # The hash tag length can't be more than the body length minus the `#`
     text = models.CharField(max_length=139)
 
