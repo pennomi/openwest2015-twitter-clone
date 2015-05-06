@@ -15,7 +15,7 @@ class MyMessageList(MessageList):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        return queryset.filter(user=self.request.user)
+        return queryset.filter(user_id=self.request.user.id)
 
 
 class FilteredMessageList(MessageList):
