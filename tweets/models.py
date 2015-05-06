@@ -18,7 +18,13 @@ class Message(models.Model):
         settings.AUTH_USER_MODEL, related_name="starred_messages", blank=True)
     tagged_users = models.ManyToManyField(
         settings.AUTH_USER_MODEL, related_name="messages_tagged_in", blank=True)
-    hash_tags = models.ManyToManyField(HashTag, blank=True)
+    hashtags = models.ManyToManyField(Hashtag, blank=True)
+
+    class Meta:
+        ordering = ['-pk']
+
+    def get_absolute_url(self):
+        return reverse('my-messages')
 
     def __str__(self):
         return self.text
