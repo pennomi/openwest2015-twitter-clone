@@ -10,6 +10,12 @@ class MessageList(ListView):
     template_name = "message_list.html"
     model = Message
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        hashtag = self.request.GET.get('hashtag')
+        if hashtag:
+            queryset = queryset.filter(hashtags__text=hashtag)
+        return queryset
 
 class MyMessageList(MessageList):
 
