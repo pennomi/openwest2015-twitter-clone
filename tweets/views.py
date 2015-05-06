@@ -1,5 +1,6 @@
 from django.http import Http404
-from django.shortcuts import render
+from django.contrib.auth import get_user_model
+from django.shortcuts import render, get_object_or_404
 from django.utils.translation import ugettext as _
 from django.views.generic import ListView
 
@@ -20,9 +21,12 @@ class MyMessageList(MessageList):
 class FilteredMessageList(MessageList):
 
     def get_queryset(self):
+        # Check to see if user exists. 404 if not.
+        username = self.kwargs.get('username')
+        user = get_object_or_404(get_user_model(), username=username)
+
+        # Filter messages by the user as author.
         queryset = super().get_queryset()
-        queryset = queryset.filter(user__username=self.kwargs.get('username'))
-        if not queryset:
-            raise Http404(_('Username not found.'))
+        return queryset.filter(user=user)
 
         return queryset
