@@ -7,7 +7,16 @@
     <p>
       {{ message.text }}
     </p>
-    <p><strong>{{ message.user }}</strong> <em>{{ message.created_at | date }} {{ message.created_at | time }}</em></p>
+    <p><strong><a href="{% url 'user-messages' message.user %}">{{ message.user }}</a></strong> <em>{{ message.created_at | date }} {{ message.created_at | time }}</em></p>
+
+    <p>
+      <strong>Tags:</strong>
+      {% for tag in message.hashtags.all %} <a href="?hashtag={{ tag }}">{{ tag }}</a> {% endfor %}
+    </p>
+    <p>
+      <strong>Mentions:</strong>
+      {% for user in message.tagged_users.all %} <a href="{% url 'user-messages' user %}">{{ user.username }}</a> {% endfor %}
+    </p>
     <hr>
   {% empty %}
     <h3>These are not the messages you are looking for.</h3>
