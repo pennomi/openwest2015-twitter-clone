@@ -19,8 +19,11 @@ from django.contrib.auth import urls as auth_urls
 
 from tweets import urls as tweets_urls
 
+from .views import RegistrationView
+
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^register/$', RegistrationView.as_view(), name='register'),
     url(r'^account/', include(auth_urls)),
     url(r'', include(tweets_urls))
 ]
