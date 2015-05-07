@@ -19,7 +19,16 @@
           text-align: center;
           color: white;
       ">
+          {% if user.is_authenticated %}
+          <a href="{% url 'my-messages' %}">Your Messages</a>
+          {% endif %}
           <h1> A Header. Woo.</h1>
+          {% if user.is_authenticated %}
+          <a href="{% url 'logout' %}?next={% url 'index' %}">Logout</a>
+          {% else %}
+          <a href="{% url 'login' %}">Login</a>
+          <a href="">Register</a>
+          {% endif %}
       </div>
       <!-- END Header -->
       <!-- Main Container -->
