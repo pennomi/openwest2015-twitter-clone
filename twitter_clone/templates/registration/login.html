@@ -1,0 +1,23 @@
+{% extends "template_base.html" %}
+
+{% block body %}
+{% if form.errors %}
+<p>Your username and password didn't match. Please try again.</p>
+{% endif %}
+
+<form method="POST">
+  {% csrf_token %}
+  <table>
+  <tr>
+      <td>{{ form.username.label_tag }}</td>
+      <td>{{ form.username }}</td>
+  </tr>
+  <tr>
+      <td>{{ form.password.label_tag }}</td>
+      <td>{{ form.password }}</td>
+  </tr>
+  </table>
+  <input type="hidden" name="next" value="{% url 'index' %}">
+  <input type="submit" value="Login">
+</form>
+{% endblock %}
