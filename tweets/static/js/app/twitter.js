@@ -64,7 +64,7 @@
   .directive('hashtagLinker', function ($compile) {
     return {
       restrict: 'E',
-      template: "<div><h4>{+ message.user +}</h4></div>",
+      template: '<div><h4><a ui-sref="users_messages({username: message.username})">{+ message.username +}</a></h4></div>',
       transclude: true,
       scope: {
         message: "=",
