@@ -26,6 +26,7 @@
             <ul class="nav navbar-nav">
               <li><a href="/">Home</a></li>
               {% if user.is_authenticated %}
+              <li><a href="{% url 'new-message' %}">New Messages</a></li>
               <li><a href="{% url 'my-messages' %}">Your Messages</a></li>
               <li><a href="{% url 'logout' %}?next={% url 'index' %}">Logout</a></li>
               {% else %}
