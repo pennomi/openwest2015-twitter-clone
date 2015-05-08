@@ -1,0 +1,11 @@
+<div ng-repeat="message in messages() track by message.id">
+  <hashtag-linker message="message.message" ></hashtag-linker>
+  <switch-out-button-on-save twitter-save="remove(message)" value="x">
+  </switch-out-button-on-save>
+</div>
+
+<form ng-controller="createMessageCtrl">
+  <input type='text' ng-model="newMessage" />
+  <switch-out-button-on-save value="Save" twitter-save="save(newMessage)"
+    ng-click="newMessage =''" />
+</form>

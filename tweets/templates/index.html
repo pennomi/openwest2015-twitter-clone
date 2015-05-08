@@ -2,31 +2,13 @@
   <head>
     {% load staticfiles %}
     <title>How AngularJS does twitter</title>
-    <link rel="stylesheet" href="http://css-spinners.com/css/spinner/atebits.css" type="text/css">
-    <link type="text/css" rel="stylesheet" href="{% static 'css/site.css' %}"></link>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.js"></script>
+    <script src="{% static 'js/lib/angular-ui-router.js' %}"></script>
+    <link type="text/css" rel="stylesheet" href="{% static 'css/site.css' %}"></link>
     <!-- Allows django to find our static files -->
     <script src="{% static 'js/app/twitter.js' %}"></script>
   </head>
   <!-- Gives our angular app scope for the entire body of the html -->
   <body ng-app="twitter">
-    <!-- Allows two binding between the list controller -->
-    <div ng-controller="messagesCtrl">
-      <!--- iterates over all our messages -->
-      <div ng-repeat="message in messages() track by message.id">
-        {+ message +}
-        <hashtag-linker message="message.message" ></hashtag-linker>
-        <switch-out-button-on-save twitter-save="remove(message)" value="x">
-        </switch-out-button-on-save>
-      </div>
-    </div>
-
-    <div ng-controller="createMessageCtrl">
-      <form>
-        <input type='text' ng-model="newMessage" />
-        <switch-out-button-on-save value="Save" twitter-save="save(newMessage)"
-          ng-click="newMessage =''" />
-      </form>
-    </div>
-  </body>
+    <ui-view></ui-view>
 </html>

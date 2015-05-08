@@ -1,13 +1,20 @@
 (function (angular) {
   // Creates a sweet angulur module with no dependencies
-  angular.module('twitter', [])
+  angular.module('twitter', ['ui.router'])
 
+  .constant('STATIC_URL', 'static/js/app/views/')
   // factories are singletons! So the same instance will shared across
   // all our controllers!
-  .config(function ($interpolateProvider) {
+  .config(function ($interpolateProvider, $stateProvider, STATIC_URL) {
     // Have to change the interpolate symbol because it's the same as djangos!
     $interpolateProvider.startSymbol('{+');
     $interpolateProvider.endSymbol('+}');
+
+    $stateProvider.state('base', {
+      url: '',
+      controller: "messagesCtrl",
+      templateUrl: STATIC_URL + "messages.html"
+    })
   })
 
   .directive('spinningMyLifeAway', function () {
