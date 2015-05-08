@@ -37,6 +37,27 @@
     }
   })
 
+  .directive('hashtagLinker', function ($compile) {
+    return {
+      restrict: 'E',
+      template: "<div></div>",
+      transclude: true,
+      scope: {
+        message: "="
+      },
+      link: function (scope, element, attrs) {
+        var content;
+        var watch = scope.$watch('message', function (newVal, oldVal) {
+          if (newVal) {
+            content = $compile("<span>" + scope.message + "</span>")(scope);
+            element.children()[0].appendChild(content[0]);
+            watch();
+          }
+        });
+      }
+    }
+  })
+
   .factory('messages', function ($q, $timeout) {
     var messages = [],
         idCounter = 0;
@@ -59,19 +80,25 @@
       var promise = $q.defer();
 
       $timeout(function () {
-        messages.push({message: message, id: idCounter++});
-        promise.resolve();
+        if (message) {
+          messages.push({message: message, id: idCounter++});
+          promise.resolve();
+        } else {
+          promise.reject();
+        }
       }, 2000);
       return promise.promise;
     }
 
     function remove (message) {
       // filters out the message and creates a new array
+      console.log(message);
       var promise = $q.defer();
       $timeout(function () {
         messages = messages.filter(function (m) {
           return m !== message;
         });
+        console.log(messages);
         return promise.resolve();
       }, 2000);
       return promise.promise;
