@@ -1,7 +1,11 @@
 .body-content {
-  padding: 60px 15px;
+    padding: 60px 15px;
 }
 
+.message {
+    padding-bottom: 5px;
+    border-bottom: 1px solid;
+}
 
 @keyframes spinner {
     to {transform: rotate(360deg);}
