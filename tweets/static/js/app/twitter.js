@@ -15,6 +15,16 @@
       controller: "messagesCtrl",
       templateUrl: STATIC_URL + "messages.html"
     })
+    .state('my_messages', {
+      url: '/my-messages',
+      controller: 'myMessagesCtrl',
+      templateUrl: STATIC_URL + "messages.html"
+    })
+    .state('users_messages', {
+      url: '/messages/:username',
+      controller: 'usersMessagesCtrl',
+      templateUrl: STATIC_URL + "messages.html"
+    })
   })
 
   .directive('spinningMyLifeAway', function () {
@@ -65,7 +75,19 @@
     }
   })
 
-  .factory('messages', function ($q, $timeout) {
+  .factory('user', function () {
+    var username;
+  })
+
+  .factory('login', function ($http) {
+    return function login (username, password) {
+      var creds = username + ":" + password;
+      creds = atob(creds);
+      $http.defaults.headers.common.Authorization = "Basic " + creds;
+    }
+  })
+
+  .factory('messages', function ($http) {
     var messages = [],
         idCounter = 0;
     createMessage('howdy');
@@ -79,36 +101,17 @@
 
     // Hoisting will put this messages at the top
     // Just for organization
-    function getList () {
-      return messages;
+    function getList (username) {
+      return $http.get('api/messages').success(function (response) {
+        messages = response;
+      })
     }
 
     function createMessage (message) {
-      var promise = $q.defer();
-
-      $timeout(function () {
-        if (message) {
-          messages.push({message: message, id: idCounter++});
-          promise.resolve();
-        } else {
-          promise.reject();
-        }
-      }, 2000);
-      return promise.promise;
     }
 
     function remove (message) {
-      // filters out the message and creates a new array
-      console.log(message);
-      var promise = $q.defer();
-      $timeout(function () {
-        messages = messages.filter(function (m) {
-          return m !== message;
-        });
-        console.log(messages);
-        return promise.resolve();
-      }, 2000);
-      return promise.promise;
+
     }
   })
 
