@@ -11,8 +11,9 @@
     <!-- Allows two binding between the list controller -->
     <div ng-controller="messagesCtrl">
       <!--- iterates over all our messages -->
-      <div ng-repeat="message in messages()">
-        {+ message +}
+      <div ng-repeat="message in messages() track by $index">
+        {+ message.message +}
+        <input type="button" ng-click="remove(message)" value="x" />
       </div>
     </div>
 

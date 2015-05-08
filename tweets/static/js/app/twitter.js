@@ -8,13 +8,19 @@
     // Have to change the interpolate symbol because it's the same as djangos!
     $interpolateProvider.startSymbol('{+');
     $interpolateProvider.endSymbol('+}');
-
   })
+
+
   .factory('messages', function () {
-    var messages = ["howdy", "monkies"]
+    var messages = [],
+        idCounter = 0;
+    createMessage('howdy');
+    createMessage('Monkies');
+
     return {
       getList: getList,
-      createMessage: createMessage
+      createMessage: createMessage,
+      remove: remove
     }
 
     // Hoisting will put this messages at the top
@@ -24,7 +30,14 @@
     }
 
     function createMessage (message) {
-      messages.push(message)
+      messages.push({message: message, id: idCounter++});
+    }
+
+    function remove (message) {
+      // filters out the message and creates a new array
+      messages = messages.filter(function (m) {
+        return m !== message;
+      })
     }
   })
 
@@ -42,6 +55,8 @@
 
   // a controller for listing messages
   .controller('messagesCtrl', function ($scope, messages) {
+    // forwarding the message functions
     $scope.messages = messages.getList;
+    $scope.remove = messages.remove;
   })
 })(angular)
