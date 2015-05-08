@@ -81,8 +81,9 @@
 
   .factory('login', function ($http) {
     return function login (username, password) {
-      var creds = username + ":" + password;
-      creds = atob(creds);
+      var creds = 'a' + ":" + 'a';
+      console.log(creds);
+      creds = window.btoa(creds);
       $http.defaults.headers.common.Authorization = "Basic " + creds;
     }
   })
@@ -90,24 +91,34 @@
   .factory('messages', function ($http) {
     var messages = [],
         idCounter = 0;
-    createMessage('howdy');
-    createMessage('Monkies');
 
+    asynchGetList();
     return {
-      getList: getList,
+      refrestList: asynchGetList,
+      getDefaultList: getDefaultList,
       createMessage: createMessage,
       remove: remove
     }
 
+    function asynchGetList () {
+      $http.get('api/messages/').success(function (response) {
+        messages = response;
+      });
+    }
+
     // Hoisting will put this messages at the top
     // Just for organization
-    function getList (username) {
-      return $http.get('api/messages').success(function (response) {
-        messages = response;
-      })
+    function getDefaultList () {
+      return messages;
+    }
+
+    function geMyMessageList () {
+      
     }
 
     function createMessage (message) {
+      return $http.post('api/messages/', {text: message})
+      .success(asynchGetList);
     }
 
     function remove (message) {
@@ -123,9 +134,10 @@
   })
 
   // a controller for listing messages
-  .controller('messagesCtrl', function ($scope, messages) {
+  .controller('messagesCtrl', function ($scope, messages, login) {
     // forwarding the message functions
-    $scope.messages = messages.getList;
+    login()
+    $scope.messages = messages.getDefaultList;
     $scope.remove = messages.remove;
   })
 })(angular)

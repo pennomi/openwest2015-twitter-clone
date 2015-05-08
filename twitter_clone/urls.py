@@ -16,6 +16,7 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.auth import urls as auth_urls
+from django.views.generic import TemplateView
 
 from tweets import urls as tweets_urls
 
@@ -25,5 +26,6 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^register/$', RegistrationView.as_view(), name='register'),
     url(r'^account/', include(auth_urls)),
-    url(r'', include(tweets_urls))
+    url(r'^api/', include(tweets_urls)),
+    url(r'', TemplateView.as_view(template_name="index.html")), # this is bad - don't do it!
 ]
