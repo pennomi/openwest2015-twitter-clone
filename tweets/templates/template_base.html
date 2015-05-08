@@ -3,25 +3,47 @@
   <head>
     <title>This is so *NOT* Twitter</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/site.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-theme.css' %}">
+    <script src="{% static 'js/jquery.js' %}"></script>
+    <script src="{% static 'js/bootstrap.js' %}"></script>
+
   </head>
   <body>
       <!-- Header -->
-      <div class="header">
-          {% if user.is_authenticated %}
-          <a href="{% url 'my-messages' %}">Your Messages</a>
-          {% endif %}
-          <h1> A Header. Woo.</h1>
-          {% if user.is_authenticated %}
-          <a href="{% url 'logout' %}?next={% url 'index' %}">Logout</a>
-          {% else %}
-          <a href="{% url 'login' %}">Login</a>
-          <a href="">Register</a>
-          {% endif %}
-      </div>
+      <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">I Can't Believe It's Not Twitter</a>
+          </div>
+          <div id="navbar" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+              <li><a href="/">Home</a></li>
+              {% if user.is_authenticated %}
+              <li><a href="{% url 'my-messages' %}">Your Messages</a></li>
+              <li><a href="{% url 'logout' %}?next={% url 'index' %}">Logout</a></li>
+              {% else %}
+              <li><a href="{% url 'login' %}">Login</a></li>
+              <li><a href="{% url 'register' %}">Register</a></li>
+              {% endif %}
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
       <!-- END Header -->
       <!-- Main Container -->
-      {% block body %}
-      {% endblock %}
+      <div class="container">
+        <div class="body-content">
+        {% block body %}
+        {% endblock %}
+        </div>
+      </div>
       <!-- END Main Container -->
       <!-- Footer -->
       <div>
