@@ -34,6 +34,6 @@ class MessageViewSet(viewsets.ModelViewSet):
         if hashtag:
             queryset = queryset.filter(hashtags__text=hashtag)
         if user:
-            queryset = queryset.filter(user__username=user)
+            queryset = queryset.filter(tagged_users__username=user)
         return queryset
 

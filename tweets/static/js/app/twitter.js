@@ -5,10 +5,12 @@
   .constant('STATIC_URL', 'static/js/app/views/')
   // factories are singletons! So the same instance will shared across
   // all our controllers!
-  .config(function ($interpolateProvider, $stateProvider, STATIC_URL) {
+  .config(function ($interpolateProvider, $stateProvider, STATIC_URL, $locationProvider) {
     // Have to change the interpolate symbol because it's the same as djangos!
     $interpolateProvider.startSymbol('{+');
     $interpolateProvider.endSymbol('+}');
+
+    $locationProvider.html5Mode(true); // no weird urls!!!
 
     $stateProvider.state('base', {
       url: '/',
@@ -26,7 +28,7 @@
       templateUrl: STATIC_URL + "messages.html"
     })
     .state('hashtag_messages', {
-      url: '/messages/:hashtag',
+      url: '/messages/hashtag/:hashtag',
       controller: 'hashtagMessagesCtrl',
       templateUrl: STATIC_URL + "messages.html"
     })
@@ -126,7 +128,6 @@
     var messages = [],
         idCounter = 0;
 
-    asynchGetList();
     return {
       refreshList: asynchGetList,
       getDefaultList: getDefaultList,
@@ -188,7 +189,7 @@
   })
 
   .controller('usersMessagesCtrl', function ($scope, messages, $stateParams) {
-    messages.refreshList($stateParams.username);
+    messages.refreshList(undefined, $stateParams.username);
     $scope.messages = messages.getDefaultList;
   })
 })(angular)
