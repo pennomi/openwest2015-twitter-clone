@@ -32,9 +32,9 @@ class Message(models.Model):
     def __str__(self):
         return self.text
 
-    def save(self):
+    def save(self, *args, **kwargs):
         # Must already exist in DB to be used in m2m relations below
-        super().save()
+        super().save(*args, **kwargs)
 
         # Look up users and create FKs to them if they exist
         User = get_user_model()
