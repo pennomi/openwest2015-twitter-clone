@@ -2,6 +2,8 @@
   <head>
     {% load staticfiles %}
     <title>How AngularJS does twitter</title>
+    <link rel="stylesheet" href="http://css-spinners.com/css/spinner/atebits.css" type="text/css">
+    <link type="text/css" rel="stylesheet" href="{% static 'css/site.css' %}"></link>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.js"></script>
     <!-- Allows django to find our static files -->
     <script src="{% static 'js/app/twitter.js' %}"></script>
@@ -13,14 +15,15 @@
       <!--- iterates over all our messages -->
       <div ng-repeat="message in messages() track by $index">
         {+ message.message +}
-        <input type="button" ng-click="remove(message)" value="x" />
+        <switch-out-button-on-save twitter-save="remove(message)" value="x" />
       </div>
     </div>
 
     <div ng-controller="createMessageCtrl">
-      <form ng-submit="save()">
+      <form>
         <input type='text' ng-model="newMessage" />
-        <input type='submit' value="Save" />
+        <switch-out-button-on-save value="Save" twitter-save="save(newMessage)"
+          ng-click="newMessage =''" />
       </form>
     </div>
   </body>

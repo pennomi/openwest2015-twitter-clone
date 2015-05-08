@@ -10,8 +10,34 @@
     $interpolateProvider.endSymbol('+}');
   })
 
+  .directive('spinningMyLifeAway', function () {
+    return {
+      template: "<span class=\"spinner\"></span>",
+    }
+  })
 
-  .factory('messages', function () {
+  .directive('switchOutButtonOnSave', function () {
+    return {
+      restrict: 'E',
+      template: "<input type=\"button\" value=\"{+ value+}\" ng-click=\"submitting()\"" +
+                "ng-if=\"!saving\"/><spinning-my-life-away ng-if=\"saving\" spin=\"saving\">",
+      scope: {
+        'value': '@', // value is 1 way binding
+        'save': '&twitterSave' // allows us to decouple
+      },
+      link: function (scope, element, attributes) {
+        scope.submitting = submitting;
+
+        function submitting () {
+          scope.saving = true;
+          var b = scope.save()
+          b.finally(function () {scope.saving = false; });
+        }
+      }
+    }
+  })
+
+  .factory('messages', function ($q, $timeout) {
     var messages = [],
         idCounter = 0;
     createMessage('howdy');
@@ -30,27 +56,33 @@
     }
 
     function createMessage (message) {
-      messages.push({message: message, id: idCounter++});
+      var promise = $q.defer();
+
+      $timeout(function () {
+        messages.push({message: message, id: idCounter++});
+        promise.resolve();
+      }, 2000);
+      return promise.promise;
     }
 
     function remove (message) {
       // filters out the message and creates a new array
-      messages = messages.filter(function (m) {
-        return m !== message;
-      })
+      var promise = $q.defer();
+      $timeout(function () {
+        messages = messages.filter(function (m) {
+          return m !== message;
+        });
+        return promise.resolve();
+      }, 2000);
+      return promise.promise;
     }
   })
 
 
   // a controller for creating messages
-  .controller('createMessageCtrl', function ($scope, messages) {
+  .controller('createMessageCtrl', function ($scope, messages, $timeout, $q) {
     // allows the use of the save method inside the template
-    $scope.save = save;
-
-    function save () {
-      messages.createMessage($scope.newMessage);
-      $scope.newMessage = ''; // resets our model
-    }
+    $scope.save = messages.createMessage;
   })
 
   // a controller for listing messages
