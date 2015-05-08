@@ -25,6 +25,11 @@
       controller: 'usersMessagesCtrl',
       templateUrl: STATIC_URL + "messages.html"
     })
+    .state('hashtag_messages', {
+      url: '/messages/:hashtag',
+      controller: 'hashtagMessagesCtrl',
+      templateUrl: STATIC_URL + "messages.html"
+    })
   })
 
   .directive('spinningMyLifeAway', function () {
@@ -64,9 +69,25 @@
       },
       link: function (scope, element, attrs) {
         var content;
+        function createHashTagLinks (hashtag) {
+          var word = hashtag.split('#')[1];
+          word = '<a ui-sref="hashtag_messages({hashtag: \'' + word + '\'})">' + hashtag + '</a>';
+          console.log('word ', word);
+          return word;
+        }
         var watch = scope.$watch('message', function (newVal, oldVal) {
           if (newVal) {
-            content = $compile("<span>" + scope.message + "</span>")(scope);
+            var hashtags = scope.message.match(/#\w+/g),
+                links = '';
+            if (hashtags) {
+              links = hashtags.reduce(function (previous, hashtag) {
+                return previous + createHashTagLinks(hashtag)
+              }, '')
+              console.log(links);
+            }
+        
+            var tweet = "<span>" + scope.message + "<div>" + links + "</div></span>"
+            content = $compile(tweet)(scope);
             element.children()[0].appendChild(content[0]);
             watch();
           }
@@ -94,14 +115,20 @@
 
     asynchGetList();
     return {
-      refrestList: asynchGetList,
+      refreshList: asynchGetList,
       getDefaultList: getDefaultList,
       createMessage: createMessage,
       remove: remove
     }
 
-    function asynchGetList () {
-      $http.get('api/messages/').success(function (response) {
+    function asynchGetList (hashtag, username) {
+      console.log(hashtag);
+      $http.get('api/messages/', {
+        params: {
+          username: username,
+          hashtag: hashtag
+        }
+      }).success(function (response) {
         messages = response;
       });
     }
@@ -128,7 +155,7 @@
 
 
   // a controller for creating messages
-  .controller('createMessageCtrl', function ($scope, messages, $timeout, $q) {
+  .controller('createMessageCtrl', function ($scope, messages) {
     // allows the use of the save method inside the template
     $scope.save = messages.createMessage;
   })
@@ -137,7 +164,13 @@
   .controller('messagesCtrl', function ($scope, messages, login) {
     // forwarding the message functions
     login()
+    messages.refreshList()
     $scope.messages = messages.getDefaultList;
     $scope.remove = messages.remove;
+  })
+
+  .controller('hashtagMessagesCtrl', function ($scope, messages, $stateParams) {
+    messages.refreshList($stateParams.hashtag);
+    $scope.messages = messages.getDefaultList;
   })
 })(angular)
