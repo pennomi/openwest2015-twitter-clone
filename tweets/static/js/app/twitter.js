@@ -11,7 +11,7 @@
     $interpolateProvider.endSymbol('+}');
 
     $stateProvider.state('base', {
-      url: '',
+      url: '/',
       controller: "messagesCtrl",
       templateUrl: STATIC_URL + "messages.html"
     })
@@ -71,19 +71,32 @@
         var content;
         function createHashTagLinks (hashtag) {
           var word = hashtag.split('#')[1];
-          word = '<a ui-sref="hashtag_messages({hashtag: \'' + word + '\'})">' + hashtag + '</a>';
-          console.log('word ', word);
-          return word;
+          return '<a ui-sref="hashtag_messages({hashtag: \'' + word + '\'})">' +
+                   hashtag + '</a>';
         }
+
+        function createUserTagLinks (username) {
+         var user = username.split('@')[1];
+          return '<a ui-sref="users_messages({username: \'' + user + '\'})">' +
+                   username + '</a>';
+        }
+
         var watch = scope.$watch('message', function (newVal, oldVal) {
           if (newVal) {
             var hashtags = scope.message.match(/#\w+/g),
-                links = '';
+                links = '',
+                users = scope.message.match(/@\w+/g);
+
             if (hashtags) {
               links = hashtags.reduce(function (previous, hashtag) {
-                return previous + createHashTagLinks(hashtag)
+                return previous + " " + createHashTagLinks(hashtag)
               }, '')
-              console.log(links);
+            }
+
+            if (users) {
+              links += users.reduce(function (previous, username) {
+                return previous + " " + createUserTagLinks(username);
+              }, '');
             }
         
             var tweet = "<span>" + scope.message + "<div>" + links + "</div></span>"
@@ -171,6 +184,11 @@
 
   .controller('hashtagMessagesCtrl', function ($scope, messages, $stateParams) {
     messages.refreshList($stateParams.hashtag);
+    $scope.messages = messages.getDefaultList;
+  })
+
+  .controller('usersMessagesCtrl', function ($scope, messages, $stateParams) {
+    messages.refreshList($stateParams.username);
     $scope.messages = messages.getDefaultList;
   })
 })(angular)
