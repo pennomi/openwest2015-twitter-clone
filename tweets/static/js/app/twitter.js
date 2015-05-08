@@ -1,10 +1,9 @@
 (function (angular) {
-  // Creates a sweet angulur module with no dependencies
+  // Creates a sweet angulur module
   angular.module('twitter', ['ui.router'])
 
   .constant('STATIC_URL', 'static/js/app/views/')
-  // factories are singletons! So the same instance will shared across
-  // all our controllers!
+
   .config(function ($interpolateProvider, $stateProvider, STATIC_URL, $locationProvider) {
     // Have to change the interpolate symbol because it's the same as djangos!
     $interpolateProvider.startSymbol('{+');
@@ -17,6 +16,10 @@
       controller: "messagesCtrl",
       templateUrl: STATIC_URL + "messages.html"
     })
+	.state('login', {
+		controller: 'loginCtrl',
+		templateUrl: STATIC_URL + 'login.html'
+	})
     .state('my_messages', {
       url: '/my-messages',
       controller: 'myMessagesCtrl',
@@ -34,6 +37,9 @@
     })
   })
 
+   .run(function ($rootScope, user) {
+      $rootScope.user = user.get; // attaches user.get to all non isolated scopes!
+   })
   .directive('spinningMyLifeAway', function () {
     return {
       template: "<span class=\"spinner\"></span>",
@@ -111,22 +117,16 @@
     }
   })
 
-  .factory('user', function () {
-    var username;
-  })
-
   .factory('login', function ($http) {
     return function login (username, password) {
-      var creds = 'a' + ":" + 'a';
-      console.log(creds);
+      var creds = username + ":" + password;
       creds = window.btoa(creds);
       $http.defaults.headers.common.Authorization = "Basic " + creds;
     }
   })
 
-  .factory('messages', function ($http) {
+  .factory('messages', function ($http, $q) {
     var messages = [],
-        idCounter = 0,
         current_params = {};
 
     return {
@@ -138,11 +138,14 @@
 
     function asynchGetList (params) {
       current_params = params;
+	  var defer = $q.defer();
       $http.get('api/messages/', {
         params: params
       }).success(function (response) {
         messages = response;
-      });
+		defer.resolve();
+      }).error(defer.reject);
+	  return defer.promise;
     }
 
     // Hoisting will put this messages at the top
@@ -151,13 +154,9 @@
       return messages;
     }
 
-    function geMyMessageList () {
-      
-    }
-
     function createMessage (message) {
       return $http.post('api/messages/', {text: message})
-      .success(asynchGetList.bind(null, current_params));
+           .success(asynchGetList.bind(null, current_params));
     }
 
     function remove (message) {
@@ -167,6 +166,14 @@
   })
 
 
+  .factory('user', function () {
+	 var username;
+	 return {
+       get : function () { return username; },
+	   set : function (_) { username = _; }
+	 }
+  })
+  
   // a controller for creating messages
   .controller('createMessageCtrl', function ($scope, messages) {
     // allows the use of the save method inside the template
@@ -176,8 +183,7 @@
   // a controller for listing messages
   .controller('messagesCtrl', function ($scope, messages, login) {
     // forwarding the message functions
-    login()
-    messages.refreshList()
+    messages.refreshList();
     $scope.messages = messages.getDefaultList;
     $scope.remove = messages.remove;
   })
@@ -192,5 +198,24 @@
     messages.refreshList({username: $stateParams.username});
     $scope.messages = messages.getDefaultList;
     $scope.remove = messages.remove;
+  })
+  
+  .controller('loginInfo', function ($scope, user) {
+     $scope.username = user.get;
+  })
+  
+  .controller('loginCtrl', function ($scope, login, messages, $state, user) {
+	  $scope.login = logMeIn;
+	  function logMeIn () {
+	    login($scope.username, $scope.password);
+		messages.refreshList()
+		  .then(function () {
+		    user.set($scope.username);
+			$state.go('base');
+			},
+			function () {
+	        $scope.errors = "These are not the droids you're looking for. Move along."
+		  })
+	  }
   })
 })(angular)
