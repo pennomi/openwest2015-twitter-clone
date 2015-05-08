@@ -135,13 +135,9 @@
       remove: remove
     }
 
-    function asynchGetList (hashtag, username) {
-      console.log(hashtag);
+    function asynchGetList (params) {
       $http.get('api/messages/', {
-        params: {
-          username: username,
-          hashtag: hashtag
-        }
+        params: params
       }).success(function (response) {
         messages = response;
       });
@@ -163,7 +159,8 @@
     }
 
     function remove (message) {
-
+      return $http.delete('api/messages/' + message.id + '/')
+          .success(asynchGetList.bind());
     }
   })
 
@@ -184,12 +181,14 @@
   })
 
   .controller('hashtagMessagesCtrl', function ($scope, messages, $stateParams) {
-    messages.refreshList($stateParams.hashtag);
+    messages.refreshList({hashtag: $stateParams.hashtag});
     $scope.messages = messages.getDefaultList;
+    $scope.remove = messages.remove;
   })
 
   .controller('usersMessagesCtrl', function ($scope, messages, $stateParams) {
-    messages.refreshList(undefined, $stateParams.username);
+    messages.refreshList({username: $stateParams.username});
     $scope.messages = messages.getDefaultList;
+    $scope.remove = messages.remove;
   })
 })(angular)
