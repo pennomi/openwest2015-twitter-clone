@@ -2,7 +2,8 @@
   <a ui-sref="login" ng-hide="username()">Login</a>
   <div ng-if="username()">Welcome, {+ username() +}!</div>
 </div>
-<div class="message" ng-repeat="message in messages() track by message.id">
+Search: <input type="search" ng-model="search.txt" ng-init="search = {}" />
+<div class="message" ng-repeat="message in messages() | filter:search.txt" >
   <hashtag-linker message="message" ></hashtag-linker>
   <switch-out-button-on-save twitter-save="remove(message)" value="x">
   </switch-out-button-on-save>
