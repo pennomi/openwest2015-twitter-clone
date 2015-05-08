@@ -126,7 +126,8 @@
 
   .factory('messages', function ($http) {
     var messages = [],
-        idCounter = 0;
+        idCounter = 0,
+        current_params = {};
 
     return {
       refreshList: asynchGetList,
@@ -136,6 +137,7 @@
     }
 
     function asynchGetList (params) {
+      current_params = params;
       $http.get('api/messages/', {
         params: params
       }).success(function (response) {
@@ -155,7 +157,7 @@
 
     function createMessage (message) {
       return $http.post('api/messages/', {text: message})
-      .success(asynchGetList);
+      .success(asynchGetList.bind(null, current_params));
     }
 
     function remove (message) {
