@@ -26,3 +26,14 @@ class MessageViewSet(viewsets.ModelViewSet):
     permission_classes = [MessagePermission]
     authentication_classes = [authentication.BasicAuthentication,
                               authentication.SessionAuthentication]
+
+    def get_queryset(self):
+        hashtag = self.request.QUERY_PARAMS.get('hashtag')
+        user = self.request.QUERY_PARAMS.get('username')
+        queryset = self.queryset
+        if hashtag:
+            queryset = queryset.filter(hashtags__text=hashtag)
+        if user:
+            queryset = queryset.filter(user__username=user)
+        return queryset
+
