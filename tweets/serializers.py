@@ -25,11 +25,14 @@ class HashtagSerializer(serializers.ModelSerializer):
 class MessageSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(
         read_only=True, default=CurrentUserDefault())
+    username = serializers.CharField(source="user.username", read_only=True)
 
     class Meta:
         model = models.Message
 
         # Don't let these values be edited directly
         read_only_fields = (
-            "user", "stars", "tagged_users", "hashtags", "created_at",
+            "user", "username", "stars", "tagged_users", "hashtags", "created_at",
         )
+
+

@@ -2,13 +2,14 @@
   <a ui-sref="login" ng-hide="username()">Login</a>
   <div ng-if="username()">Welcome, {+ username() +}!</div>
 </div>
-<div ng-repeat="message in messages() track by message.id">
-  <hashtag-linker message="message.text" ></hashtag-linker>
+<div class="message" ng-repeat="message in messages() track by message.id">
+  <hashtag-linker message="message" ></hashtag-linker>
   <switch-out-button-on-save twitter-save="remove(message)" value="x">
   </switch-out-button-on-save>
 </div>
 
 <form ng-controller="createMessageCtrl" ng-hide="!user()">
+  <label>Post a message:</label>
   <input type='text' ng-model="newMessage" />
   <switch-out-button-on-save value="Save" twitter-save="save(newMessage)"
     ng-click="newMessage =''" />

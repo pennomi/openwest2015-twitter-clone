@@ -70,10 +70,11 @@
   .directive('hashtagLinker', function ($compile) {
     return {
       restrict: 'E',
-      template: "<div></div>",
+      template: '<div><h4><a ui-sref="users_messages({username: message.username})">{+ message.username +}</a></h4></div>' +  
+                '<div>{+ message.created_at | date:"medium" +}</div>',
       transclude: true,
       scope: {
-        message: "="
+        message: "=",
       },
       link: function (scope, element, attrs) {
         var content;
@@ -91,9 +92,9 @@
 
         var watch = scope.$watch('message', function (newVal, oldVal) {
           if (newVal) {
-            var hashtags = scope.message.match(/#\w+/g),
+            var hashtags = scope.message.text.match(/#\w+/g),
                 links = '',
-                users = scope.message.match(/@\w+/g);
+                users = scope.message.text.match(/@\w+/g);
 
             if (hashtags) {
               links = hashtags.reduce(function (previous, hashtag) {
@@ -107,7 +108,7 @@
               }, '');
             }
         
-            var tweet = "<span>" + scope.message + "<div>" + links + "</div></span>"
+            var tweet = "<span>" + scope.message.text + "<div>" + links + "</div></span>"
             content = $compile(tweet)(scope);
             element.children()[0].appendChild(content[0]);
             watch();
