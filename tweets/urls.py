@@ -7,6 +7,7 @@ from tweets import api
 
 # Generate the API URLs
 router = routers.DefaultRouter()
+router.register(r'users', api.UserViewSet)
 router.register(r'hashtags', api.HashtagViewSet)
 router.register(r'messages', api.MessageViewSet)
 
