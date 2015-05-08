@@ -5,6 +5,7 @@ from .tools import UsertagParser, HashtagParser
 # Create your tests here.
 class UsertagParserTestCase(TestCase):
     def __init__(self, *args, **kwargs):
+        # Create the parser so we can use it in our tests.
         self.parser = UsertagParser()
         super().__init__(*args, **kwargs)
 
